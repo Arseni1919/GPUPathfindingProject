@@ -1,0 +1,11 @@
+[project]
+name = "gpupathfindingproject"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12.0"
+dependencies = [
+    "matplotlib>=3.10.8",
+    "plotly>=6.6.0",
+    "psutil>=7.2.2",
+    "torch>=2.11.0",
+]

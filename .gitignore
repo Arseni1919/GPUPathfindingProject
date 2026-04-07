@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Outputs (keep structure, ignore generated files)
+outputs/*.html
+outputs/*.png
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+.python-version
+
+# Jupyter
+*.ipynb_checkpoints/
+
+# Keep directory structure
+!outputs/.gitkeep
