@@ -42,7 +42,7 @@ def parse_args():
 
 
 class SimpleNN3D(nn.Module):
-    def __init__(self, in_channels, out_channels, map_mask, start_xyz, goal_xyz, save_freq=100):
+    def __init__(self, in_channels, out_channels, map_mask, start_xyz, goal_xyz, map_name, save_freq=100):
         super().__init__()
         self.conv = nn.Conv3d(in_channels, out_channels, kernel_size=3, padding=1)
         self.relu = nn.ReLU()
@@ -51,6 +51,7 @@ class SimpleNN3D(nn.Module):
         self.map_mask_5d = map_mask.unsqueeze(0).unsqueeze(0)
         self.start_xyz = start_xyz
         self.goal_xyz = goal_xyz
+        self.map_name = map_name
         self.save_freq = save_freq  # Save every Nth iteration to reduce memory
 
     def forward(self, x):
@@ -77,9 +78,9 @@ class SimpleNN3D(nn.Module):
                 if i % self.save_freq != 0:
                     x.retain_grad()
                     saved_tensors.append(x)
-                print("Generating visualization (this may take a moment)...")
+                print("Saving expanded nodes visualization...")
                 plot_voxel(x, self.map_mask.cpu(), self.start_xyz, self.goal_xyz,
-                          f"iteration_{i}_output", output_dir='outputs')
+                          f"{self.map_name}_expanded_nodes", output_dir='outputs')
                 return x, True, saved_tensors
         return x, False, saved_tensors
 
@@ -118,6 +119,7 @@ if __name__ == "__main__":
         map_path = os.path.join('maps', '3d', args.map)
         if not os.path.exists(map_path):
             raise FileNotFoundError(f"Map file not found: {map_path}")
+        map_name = os.path.splitext(args.map)[0]  # Remove .3dmap extension
     else:
         # Randomly select from available maps
         map_dir = os.path.join('maps', '3d')
@@ -126,6 +128,7 @@ if __name__ == "__main__":
             raise FileNotFoundError("No .3dmap files found in maps/3d/")
         selected_map = random.choice(available_maps)
         map_path = os.path.join(map_dir, selected_map)
+        map_name = os.path.splitext(selected_map)[0]  # Remove .3dmap extension
         print(f"Randomly selected map: {selected_map}")
 
     # Load 3D map
@@ -150,12 +153,13 @@ if __name__ == "__main__":
     print(f"Goal coordinates (z,y,x): {goal_xyz}")
 
     # Visualize start and goal with obstacles
-    distance = visualize_start_goal_preview(map_mask, start_xyz, goal_xyz, output_file='outputs/start_goal_preview.html')
+    preview_file = f'outputs/{map_name}_start_goal_preview.html'
+    distance = visualize_start_goal_preview(map_mask, start_xyz, goal_xyz, output_file=preview_file)
 
     print("\n" + "=" * 70)
     print("WAITING FOR APPROVAL")
     print("=" * 70)
-    print("Please open 'outputs/start_goal_preview.html' in your browser and verify:")
+    print(f"Please open '{preview_file}' in your browser and verify:")
     print("  1. Start (green) and Goal (red) are visible")
     print("  2. Both are in walkable space (not inside obstacles)")
     print("  3. Distance seems reasonable")
@@ -171,7 +175,7 @@ if __name__ == "__main__":
     # Note: Due to detaching between saves, only recent checkpoints will have gradients
     # For full gradient path visualization, use smaller save_freq (e.g., 10) if you have enough memory
     SAVE_FREQ = args.save_freq
-    model = SimpleNN3D(in_channels, out_channels, map_mask, start_xyz, goal_xyz, save_freq=SAVE_FREQ)
+    model = SimpleNN3D(in_channels, out_channels, map_mask, start_xyz, goal_xyz, map_name, save_freq=SAVE_FREQ)
     model = model.to(device)
     print(f"Memory optimization: saving every {SAVE_FREQ}th iteration")
 
@@ -192,14 +196,9 @@ if __name__ == "__main__":
     if goal_reached:
         print("\n=== Goal was reached during the forward pass ===")
 
-        # Visualize the final activation state before backward pass
-        print("\nVisualizing final activation state...")
-        plot_voxel(output, map_mask.cpu(), start_xyz, goal_xyz,
-                  "final_activation_state_before_backward_pass",
-                  threshold=0.1, max_voxels=5000, output_dir='outputs')
-
         # Backward pass
-        print("\nStarting backward pass...")
+        print("\n=== Starting Backward Pass ===")
+        print("Computing gradients to trace optimal path...")
         start_backward = time.time()
         output[0, 0, goal_xyz[0], goal_xyz[1], goal_xyz[2]].backward()
         backward_time = time.time() - start_backward
@@ -228,11 +227,18 @@ if __name__ == "__main__":
             print(f"Final tensor nonzero count: {(final_tensor > 0).sum().item()}")
 
             # Visualize final accumulated gradients (plot_voxel handles device->CPU transfer)
+            print("Saving optimal path visualization...")
             plot_voxel(final_tensor, map_mask.cpu(), start_xyz, goal_xyz,
-                      "final_path", threshold=0.01, max_voxels=10000, output_dir='outputs')
+                      f"{map_name}_optimal_paths", threshold=0.01, max_voxels=10000, output_dir='outputs')
 
-        print("\n=== SUCCESS: Path found from start to goal ===")
+        total_time = forward_time + backward_time
+        print("\n=== SUCCESS ===")
+        print(f"✓ Total execution time: {total_time:.2f} seconds (forward: {forward_time:.2f}s, backward: {backward_time:.2f}s)")
+        print(f"✓ Two visualizations saved to outputs/:")
+        print(f"  1. {map_name}_expanded_nodes.html - Activation state when goal was reached")
+        print(f"  2. {map_name}_optimal_paths.html - Optimal path traced via gradient accumulation")
     else:
-        print("\n=== Goal was NOT reached during the forward pass ===")
+        print("\n=== FAILED ===")
+        print("Goal was NOT reached during the forward pass.")
 
     print(f"\nRandom seed: {seed}")
