@@ -35,3 +35,5 @@ Notes:
 - Times exclude map loading, initialization, and visualization
 - Each run uses a randomly generated start/goal pair
 - Fixed seed (42) ensures reproducibility of the experiment
+- Benchmarks run on Mac with MPS (Apple Silicon) backend
+- CUDA-enabled GPUs typically provide significantly better performance than MPS

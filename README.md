@@ -67,7 +67,7 @@ Visual comparison of expanded nodes (exploration) vs. optimal paths (solution) o
 - **Optimal Paths:** Shows the traced path(s) extracted via gradient accumulation
 - **Avg Runtime:** Average execution time over 100 runs (forward + backward pass only, excludes initialization and I/O)
 
-> **Benchmark Details:** Measured on MPS (Apple Silicon) with 100 runs per map. Times include forward pass (activation propagation) and backward pass (gradient-based path extraction), excluding map loading and visualization. See `benchmarks.txt` for detailed statistics.
+> **Benchmark Details:** Measured on MPS (Apple Silicon) with 100 runs per map. Times include forward pass (activation propagation) and backward pass (gradient-based path extraction), excluding map loading and visualization. **Note:** These benchmarks were run on Mac with MPS backend. CUDA-enabled GPUs typically provide significantly better performance. See `benchmarks.txt` for detailed statistics.
 
 ## Core Innovation (Implementation Details) 💡
 
