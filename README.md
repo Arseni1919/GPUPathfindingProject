@@ -319,7 +319,20 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Citation 📚
 
 If you use this code in research, please cite:
-[Add citation information]
+
+```bibtex
+@software{pertzovsky2026gpu,
+  author = {Pertzovsky, Arseniy},
+  title = {GPU-Accelerated Neural Network Pathfinding},
+  year = {2026},
+  publisher = {GitHub},
+  url = {https://github.com/Arseni1919/GPUPathfindingProject}
+}
+```
+
+Or in plain text:
+
+Pertzovsky, A. (2026). GPU-Accelerated Neural Network Pathfinding. GitHub. https://github.com/Arseni1919/GPUPathfindingProject
 
 ---
 
