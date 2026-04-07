@@ -314,7 +314,7 @@ The 2D and 3D map files used in this repository are taken from the [Moving AI La
 
 ## License 📄
 
-[Add license information]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Citation 📚
 
