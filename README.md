@@ -57,14 +57,17 @@ class SimpleNN(nn.Module):
 
 Visual comparison of expanded nodes (exploration) vs. optimal paths (solution) on different map types:
 
-| Map Name | Expanded Nodes | Optimal Paths |
-|----------|----------------|---------------|
-| **maze512-2-9**<br/>512×512 maze | ![maze512-2-9 expanded](pics/maze512-2-9_expanded_nodes.png) | ![maze512-2-9 optimal](pics/maze512-2-9_optimal_paths.png) |
-| **maze512-8-2**<br/>512×512 maze | ![maze512-8-2 expanded](pics/maze512-8-2_expanded_nodes.png) | ![maze512-8-2 optimal](pics/maze512-8-2_optimal_paths.png) |
-| **warehouse-20-40-10-2-2**<br/>Warehouse scenario | ![warehouse expanded](pics/warehouse-20-40-10-2-2_expanded_nodes.png) | ![warehouse optimal](pics/warehouse-20-40-10-2-2_optimal_paths.png) |
+| Map Name | Expanded Nodes | Optimal Paths | Avg Runtime (100 runs) |
+|----------|----------------|---------------|------------------------|
+| **maze512-2-9**<br/>512×512 maze | ![maze512-2-9 expanded](pics/maze512-2-9_expanded_nodes.png) | ![maze512-2-9 optimal](pics/maze512-2-9_optimal_paths.png) | 2.0121s ± 1.0460s |
+| **maze512-8-2**<br/>512×512 maze | ![maze512-8-2 expanded](pics/maze512-8-2_expanded_nodes.png) | ![maze512-8-2 optimal](pics/maze512-8-2_optimal_paths.png) | 1.6700s ± 1.1873s |
+| **warehouse-20-40-10-2-2**<br/>Warehouse scenario | ![warehouse expanded](pics/warehouse-20-40-10-2-2_expanded_nodes.png) | ![warehouse optimal](pics/warehouse-20-40-10-2-2_optimal_paths.png) | 0.0660s ± 0.0353s |
 
 - **Expanded Nodes:** Shows all cells explored during forward pass when goal is reached
 - **Optimal Paths:** Shows the traced path(s) extracted via gradient accumulation
+- **Avg Runtime:** Average execution time over 100 runs (forward + backward pass only, excludes initialization and I/O)
+
+> **Benchmark Details:** Measured on MPS (Apple Silicon) with 100 runs per map. Times include forward pass (activation propagation) and backward pass (gradient-based path extraction), excluding map loading and visualization. See `benchmarks.txt` for detailed statistics.
 
 ## Core Innovation (Implementation Details) 💡
 

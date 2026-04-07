@@ -1,0 +1,37 @@
+GPU Pathfinding Benchmark Results
+============================================================
+Number of runs per map: 100
+Device: MPS (Apple Silicon)
+Seed: 42
+Timeout per run: 30 seconds
+============================================================
+
+Map: maze512-2-9
+  Average time: 2.0121s
+  Std deviation: 1.0460s
+  Min time: 0.3834s
+  Max time: 5.1053s
+  Average iterations: 2121.4
+  Successful runs: 100/100
+
+Map: maze512-8-2
+  Average time: 1.6700s
+  Std deviation: 1.1873s
+  Min time: 0.0356s
+  Max time: 5.0264s
+  Average iterations: 2177.0
+  Successful runs: 100/100
+
+Map: warehouse-20-40-10-2-2
+  Average time: 0.0660s
+  Std deviation: 0.0353s
+  Min time: 0.0142s
+  Max time: 0.1865s
+  Average iterations: 117.1
+  Successful runs: 100/100
+
+Notes:
+- Times include forward pass (activation propagation) and backward pass (gradient-based path extraction)
+- Times exclude map loading, initialization, and visualization
+- Each run uses a randomly generated start/goal pair
+- Fixed seed (42) ensures reproducibility of the experiment
